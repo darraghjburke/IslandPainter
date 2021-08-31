@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/BabylonBuilder/static/css/main.f1f3fcb2.chunk.css",
+    "main.css": "/BabylonBuilder/static/css/main.f045e780.chunk.css",
     "main.js": "/BabylonBuilder/static/js/main.95d4d86a.chunk.js",
     "main.js.map": "/BabylonBuilder/static/js/main.95d4d86a.chunk.js.map",
     "runtime-main.js": "/BabylonBuilder/static/js/runtime-main.ebeb1988.js",
@@ -10,14 +10,14 @@
     "static/js/3.c0bf95df.chunk.js": "/BabylonBuilder/static/js/3.c0bf95df.chunk.js",
     "static/js/3.c0bf95df.chunk.js.map": "/BabylonBuilder/static/js/3.c0bf95df.chunk.js.map",
     "index.html": "/BabylonBuilder/index.html",
-    "static/css/main.f1f3fcb2.chunk.css.map": "/BabylonBuilder/static/css/main.f1f3fcb2.chunk.css.map",
+    "static/css/main.f045e780.chunk.css.map": "/BabylonBuilder/static/css/main.f045e780.chunk.css.map",
     "static/js/2.8ac5849d.chunk.js.LICENSE.txt": "/BabylonBuilder/static/js/2.8ac5849d.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/BabylonBuilder/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.ebeb1988.js",
     "static/js/2.8ac5849d.chunk.js",
-    "static/css/main.f1f3fcb2.chunk.css",
+    "static/css/main.f045e780.chunk.css",
     "static/js/main.95d4d86a.chunk.js"
   ]
 }
