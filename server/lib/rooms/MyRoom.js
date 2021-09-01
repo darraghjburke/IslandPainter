@@ -86,6 +86,7 @@ class MyRoom extends colyseus_1.Room {
                 msg.color = player.color;
                 msg.message = message.message;
                 this.state.messages.push(msg);
+                console.log(client.sessionId, player.name, "said", msg.message);
             }
         });
     }
