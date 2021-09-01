@@ -1,0 +1,191 @@
+body {
+  text-align: center;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  color: white;
+  font-family: Garamond, serif;
+}
+
+::selection {
+  background-color: cornflowerblue;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#world-name {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  width: 100%;
+}
+
+#tile-panel {
+  margin-top: 30px;
+  width: 300px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -300px;
+  transition: transform 0.25s ease-out;
+  user-select: none;
+  pointer-events: none;
+  transform: translateX(-100%);
+}
+
+#tile-panel.hide {
+  transform: translateX(0%);
+}
+
+button, input {
+  pointer-events: all;
+  color: white;
+}
+
+#left-panel {
+  pointer-events: none;
+  width: 300px;
+  left: 0;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 20px;
+  bottom: 20px;
+}
+
+@media screen and (max-width: 992px) {
+  #left-panel {
+    width: 100px;
+  }
+  #tile-panel {
+    width: 150px;
+    right: -150px;
+    margin-top: 0px;
+  }
+  #tile-panel h3 {
+    margin: 5px;
+  }
+  #tile-panel hr {
+    margin-top: 0;
+  }
+}
+
+.hr {
+  width: 100%;
+  border-top: 1px solid white;
+  color: rgba(0,0,0,0);
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 90%;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+#messages {
+  width: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  pointer-events: auto;
+}
+
+.message {
+  text-align: left;
+  margin-left: 4px;
+}
+
+#chatbox {
+  width: 100%;
+}
+
+#chatbox input {
+  max-width: 100%;
+}
+
+#left-panel h3 {
+  margin: 0;
+}
+
+.player-name {
+  font-weight: bold;
+}
+
+button, input, #help-box {
+  align-self:center;
+    background:transparent;
+    padding: 0.5rem 0.5rem;
+    transition:all .5s ease;
+    color:#41403E;
+    font-size: 15px;
+    letter-spacing:1px;
+    outline:none;
+    box-shadow: 20px 38px 34px -26px hsla(0,0%,0%,.2);
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    background-color: white;
+}
+
+input[type="range"] {
+  padding: 0;
+  display: block;
+  margin: auto;
+  margin-bottom: 5px;
+}
+
+button.terrain {
+  width: 48px;
+  height: 48px;
+  margin: 5px;
+}
+
+button.terrain.selected {
+  border: 5px solid white;
+}
+
+#help-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color: black;
+  font-weight: Bold;
+}
+
+#help-box button {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+}
+
+#help-button {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  color: white;
+  border: 1px solid white;
+  border-radius: 100%;
+  font-size: 25px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  background: none;
+}
+
+#build-panel {
+  position: absolute;
+  bottom: 0;
+}
