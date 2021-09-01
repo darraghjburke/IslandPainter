@@ -1,11 +1,5 @@
 import { Schema, type, ArraySchema } from "@colyseus/schema";
 
-export class Vector3 extends Schema {
-  @type("number") x: number = 0;
-  @type("number") y: number = 0;
-  @type("number") z: number = 0;
-}
-
 export class Color3 extends Schema {
   @type("number") r: number = 0;
   @type("number") g: number = 0;
