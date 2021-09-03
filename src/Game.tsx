@@ -112,10 +112,10 @@ export default () => {
                     }
                 })
                 tile.listen("terrainType", (currentValue, previousValue) => {
-                    if (previousValue) {
+                    if (previousValue !== null) {
                         terrainMesh.dispose();
                     }
-                    if (currentValue) {
+                    if (currentValue !== null) {
                         terrainMesh = terrains[tile.terrainType].parentMesh.clone(`tile`, transformNode);
                         terrainMesh.position.set(0,0,0);
                         terrainMesh.setEnabled(true);
