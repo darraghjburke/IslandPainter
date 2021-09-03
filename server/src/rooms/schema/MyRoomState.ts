@@ -21,6 +21,7 @@ export class Tile extends Schema {
   @type("number") terrainType: number = 0;
   @type("number") height: number = 0;
   @type(Building) building : Building = null;
+  @type([Player]) focusing : Player[] = new ArraySchema<Player>();
 }
 
 export class Message extends Schema {
