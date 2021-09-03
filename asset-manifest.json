@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/IslandPainter/static/css/main.ea6b450c.chunk.css",
-    "main.js": "/IslandPainter/static/js/main.ac34857f.chunk.js",
-    "main.js.map": "/IslandPainter/static/js/main.ac34857f.chunk.js.map",
+    "main.js": "/IslandPainter/static/js/main.b02e918e.chunk.js",
+    "main.js.map": "/IslandPainter/static/js/main.b02e918e.chunk.js.map",
     "runtime-main.js": "/IslandPainter/static/js/runtime-main.88bd4d94.js",
     "runtime-main.js.map": "/IslandPainter/static/js/runtime-main.88bd4d94.js.map",
     "static/js/2.aa2c0f7f.chunk.js": "/IslandPainter/static/js/2.aa2c0f7f.chunk.js",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.88bd4d94.js",
     "static/js/2.aa2c0f7f.chunk.js",
     "static/css/main.ea6b450c.chunk.css",
-    "static/js/main.ac34857f.chunk.js"
+    "static/js/main.b02e918e.chunk.js"
   ]
 }
