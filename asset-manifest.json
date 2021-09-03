@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/IslandPainter/static/css/main.ea6b450c.chunk.css",
-    "main.js": "/IslandPainter/static/js/main.b02e918e.chunk.js",
-    "main.js.map": "/IslandPainter/static/js/main.b02e918e.chunk.js.map",
+    "main.js": "/IslandPainter/static/js/main.4f9a99a4.chunk.js",
+    "main.js.map": "/IslandPainter/static/js/main.4f9a99a4.chunk.js.map",
     "runtime-main.js": "/IslandPainter/static/js/runtime-main.88bd4d94.js",
     "runtime-main.js.map": "/IslandPainter/static/js/runtime-main.88bd4d94.js.map",
-    "static/js/2.aa2c0f7f.chunk.js": "/IslandPainter/static/js/2.aa2c0f7f.chunk.js",
-    "static/js/2.aa2c0f7f.chunk.js.map": "/IslandPainter/static/js/2.aa2c0f7f.chunk.js.map",
+    "static/js/2.a3a78f7e.chunk.js": "/IslandPainter/static/js/2.a3a78f7e.chunk.js",
+    "static/js/2.a3a78f7e.chunk.js.map": "/IslandPainter/static/js/2.a3a78f7e.chunk.js.map",
     "static/js/3.822b8571.chunk.js": "/IslandPainter/static/js/3.822b8571.chunk.js",
     "static/js/3.822b8571.chunk.js.map": "/IslandPainter/static/js/3.822b8571.chunk.js.map",
     "index.html": "/IslandPainter/index.html",
     "static/css/main.ea6b450c.chunk.css.map": "/IslandPainter/static/css/main.ea6b450c.chunk.css.map",
-    "static/js/2.aa2c0f7f.chunk.js.LICENSE.txt": "/IslandPainter/static/js/2.aa2c0f7f.chunk.js.LICENSE.txt",
+    "static/js/2.a3a78f7e.chunk.js.LICENSE.txt": "/IslandPainter/static/js/2.a3a78f7e.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/IslandPainter/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.88bd4d94.js",
-    "static/js/2.aa2c0f7f.chunk.js",
+    "static/js/2.a3a78f7e.chunk.js",
     "static/css/main.ea6b450c.chunk.css",
-    "static/js/main.b02e918e.chunk.js"
+    "static/js/main.4f9a99a4.chunk.js"
   ]
 }
