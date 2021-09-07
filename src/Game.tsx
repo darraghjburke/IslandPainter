@@ -58,11 +58,14 @@ export default () => {
 
     // thanks to RedBlobGames
     function getCoords(key: number, width: number) : [x: number, y: number] {
-        const [col, row] = [key % width, Math.floor(key / width)];
-        return getPixelFromHex(col,row);
+        return getPixelFromAxial(...getAxialFromKey(key, width));
     }
 
-    function getPixelFromHex(col: number, row: number) : [x: number, y: number] {
+    function getAxialFromKey(key: number, width: number) : [r: number, q: number] {
+        return [key % width, Math.floor(key / width)];
+    }
+
+    function getPixelFromAxial(col: number, row: number) : [x: number, y: number] {
         const sz = 1.1;
         return [sz * (Math.sqrt(3) * col + Math.sqrt(3) /2 * row), sz * 3/2 * row];
     }
@@ -77,7 +80,7 @@ export default () => {
                 forceUpdate();
             });
             const state = (room.state as MyRoomState);
-            const [cx, cy] = getPixelFromHex(25 / 2, 25 / 2);
+            const [cx, cy] = getPixelFromAxial(25 / 2, 25 / 2);
             (scene.cameras[0] as ArcRotateCamera).target.set(cx,2,cy);
             (scene.cameras[0] as ArcRotateCamera).radius = 40;
             
