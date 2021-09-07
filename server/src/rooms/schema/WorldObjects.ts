@@ -43,7 +43,7 @@ export const buildingTypes : BuildingType[] = [
     },
     {
         name: "Forest with Rock",
-        terrainTypes: [0],
+        terrainTypes: [0,3],
         asset: "forest2",
         probability: 0.2
     },

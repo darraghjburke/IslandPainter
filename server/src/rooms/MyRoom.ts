@@ -15,6 +15,11 @@ interface CubeCoord {
 }
 
 // thanks to RedBlobGames
+const axialDirections : AxialCoord[] = [
+  {r: +1, q: 0}, {r: +1, q: -1}, {r: 0, q: -1},
+  {r: -1, q: 0}, {r: -1, q: +1}, {r: 0, q: +1}
+]
+
 function axialToCube(coord: AxialCoord) : CubeCoord {
     var x = coord.q;
     var z = coord.r;
@@ -30,12 +35,48 @@ function axialDistance(a: AxialCoord, b: AxialCoord) {
   return cubeDistance(axialToCube(a),axialToCube(b));
 }
 
+function getKeyFromAxial(coord: AxialCoord, width: number) : number {
+  return width * coord.q + coord.r;
+}
+
+function setTileTerrainType(tile: Tile, type: number) {
+  tile.terrainType = type;
+    if (tile.building && !buildingTypes[tile.building.type].terrainTypes.includes(tile.terrainType)) {
+      tile.building = null;
+    }
+}
+
+function carveRiver(state: MyRoomState, startPoint: AxialCoord) {
+  let riverCarve = {q: startPoint.q, r: startPoint.r};
+  while(true) {
+    console.log(riverCarve);
+    const tile = state.tiles[getKeyFromAxial(riverCarve, state.width)];
+    if (tile.terrainType == 1) break;
+    setTileTerrainType(tile, 1);
+    tile.height = Math.max(0, tile.height - 0.3);
+    // Optional : create river banks
+    // axialDirections.forEach(dir => {
+    //   const bank = {r: riverCarve.r + dir.r, q: riverCarve.q + dir.q};
+    //   const bankTile = this.state.tiles[getKeyFromAxial(bank, this.state.width)];
+    //   if (bankTile.terrainType == 0) {
+    //     setTileTerrainType(bankTile, 3);
+    //     bankTile.height = tile.height + 0.05;
+    //   }
+    // })
+    let next : AxialCoord = riverCarve;
+    while(axialDistance(next, startPoint) <= axialDistance(riverCarve, startPoint)) {
+      const dir = axialDirections[Math.floor(Math.random() * axialDirections.length)];
+      next = {r: riverCarve.r + dir.r, q: riverCarve.q + dir.q};
+    }
+    riverCarve = next;
+  }
+}
 
 export class MyRoom extends Room<MyRoomState> {
   onCreate (options: any) {
     this.setState(new MyRoomState());
     this.state.name = getLocation();
-    const center = {r: this.state.width / 2, q: this.state.height / 2};
+    const center = {r: Math.floor(this.state.width / 2), q: Math.floor(this.state.height / 2)};
     for(let row = 0; row < this.state.height; row++) {
       for(let col = 0; col < this.state.width; col++) {
         const t = new Tile();
@@ -62,6 +103,10 @@ export class MyRoom extends Room<MyRoomState> {
         this.state.tiles.push(t);
       }
     }
+    for(let i = 0; i < 2; i++) {
+      carveRiver(this.state, center);
+      center.r++;
+    }
 
     this.onMessage("click", (client, message) => {
       console.log(message);
@@ -76,11 +121,7 @@ export class MyRoom extends Room<MyRoomState> {
       this.state.tiles[message.key].building = build;
     })
     this.onMessage("changeTerrainType", (client, message) => {
-      const tile = this.state.tiles[message.key];
-      tile.terrainType = message.type;
-      if (tile.building && !buildingTypes[tile.building.type].terrainTypes.includes(tile.terrainType)) {
-        tile.building = null;
-      }
+      setTileTerrainType(this.state.tiles[message.key], message.type);
     })
     this.onMessage("setHeight", (client, message) => {
       this.state.tiles[message.key].height = message.height;
