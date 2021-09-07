@@ -89,6 +89,21 @@ class MyRoom extends colyseus_1.Room {
                 console.log(client.sessionId, player.name, "said", msg.message);
             }
         });
+        this.onMessage("focus", (client, message) => {
+            console.log(message.key);
+            const player = this.state.players.find(pl => pl.id == client.sessionId);
+            if (player) {
+                this.state.tiles.forEach((tile, index) => {
+                    const includes = tile.focusing.includes(player);
+                    if (index === message.key && !includes) {
+                        tile.focusing = [...tile.focusing, player];
+                    }
+                    else if (index !== message.key && includes) {
+                        tile.focusing = tile.focusing.filter(pl => pl != player);
+                    }
+                });
+            }
+        });
     }
     onJoin(client, options) {
         console.log(client.sessionId, "joined!");
@@ -117,6 +132,9 @@ class MyRoom extends colyseus_1.Room {
         msg.color = this.state.players[idx].color;
         msg.message = " left.";
         this.state.messages.push(msg);
+        this.state.tiles.forEach(tile => {
+            tile.focusing = tile.focusing.filter(pl => pl != this.state.players[idx]);
+        });
         this.state.players.deleteAt(idx);
     }
     onDispose() {

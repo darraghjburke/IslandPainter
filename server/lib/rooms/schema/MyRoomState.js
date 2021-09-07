@@ -6,26 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyRoomState = exports.Message = exports.Tile = exports.Building = exports.Player = exports.Color3 = exports.Vector3 = void 0;
+exports.MyRoomState = exports.Message = exports.Tile = exports.Building = exports.Player = exports.Color3 = void 0;
 const schema_1 = require("@colyseus/schema");
-class Vector3 extends schema_1.Schema {
-    constructor() {
-        super(...arguments);
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-    }
-}
-__decorate([
-    schema_1.type("number")
-], Vector3.prototype, "x", void 0);
-__decorate([
-    schema_1.type("number")
-], Vector3.prototype, "y", void 0);
-__decorate([
-    schema_1.type("number")
-], Vector3.prototype, "z", void 0);
-exports.Vector3 = Vector3;
 class Color3 extends schema_1.Schema {
     constructor() {
         super(...arguments);
@@ -76,6 +58,7 @@ class Tile extends schema_1.Schema {
         this.terrainType = 0;
         this.height = 0;
         this.building = null;
+        this.focusing = new schema_1.ArraySchema();
     }
 }
 __decorate([
@@ -87,6 +70,9 @@ __decorate([
 __decorate([
     schema_1.type(Building)
 ], Tile.prototype, "building", void 0);
+__decorate([
+    schema_1.type([Player])
+], Tile.prototype, "focusing", void 0);
 exports.Tile = Tile;
 class Message extends schema_1.Schema {
     constructor() {

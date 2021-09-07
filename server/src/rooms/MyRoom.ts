@@ -102,7 +102,6 @@ export class MyRoom extends Room<MyRoomState> {
       }
     })
     this.onMessage("focus", (client, message) => {
-      console.log(message.key);
       const player = this.state.players.find(pl => pl.id == client.sessionId);
       if (player) {
         this.state.tiles.forEach((tile, index) => {

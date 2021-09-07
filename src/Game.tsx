@@ -146,7 +146,6 @@ export default () => {
                     transformNode.position.y = tile.height;
                 })
                 tile.listen("focusing", () => {
-                    console.log("updating", key);
                     updateTileBorder(tile, transformNode);
                 });
             }
@@ -162,8 +161,10 @@ export default () => {
                     key = keyNode.metadata.key;
                 }
                 if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-                    setFocusedKey(key);
-                    room.send("focus", {key});
+                    if (key == -1 || state.tiles[key].focusing.length == 0) {
+                        setFocusedKey(key);
+                        room.send("focus", {key});
+                    }
                 } /* else if (buildType != -1) {
                     if (key == -1) {
                         if (buildMesh != null) {
