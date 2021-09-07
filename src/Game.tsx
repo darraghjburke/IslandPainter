@@ -189,6 +189,7 @@ export default () => {
             })
             
         }).catch(e => {
+            alert("Couldn't connect to the server, it may be in the middle of redeployment. Please refresh the page in a few minutes.");
             console.log("JOIN ERROR", e);
         });
     }
