@@ -12,16 +12,16 @@ import Chat from "./Chat";
 import { buildingTypes, terrainTypes } from "./schema/WorldObjects";
 import Help from "./Help";
 import BuildPanel from "./BuildPanel";
+import { AssetContainer } from "@babylonjs/core/assetContainer";
 
 class GameObject {
-    parentMesh : Mesh;
+    assetContainer : AssetContainer;
     // buildMesh: Mesh;
 
     constructor(folder: string, glb: string, assetManager: AssetsManager) {
-        const task = assetManager.addMeshTask("task", "", `${process.env.PUBLIC_URL}/assets/${folder}/`, `${glb}.glb`);
+        const task = assetManager.addContainerTask("task", "", `${process.env.PUBLIC_URL}/assets/${folder}/`, `${glb}.glb`);
         task.onSuccess = (task) => {
-            this.parentMesh = task.loadedMeshes[0] as Mesh;
-            this.parentMesh.position.z = 1000000;
+            this.assetContainer = task.loadedContainer;
             // this.buildMesh = this.parentMesh.clone(`build${this.parentMesh.name}`, null);
             // this.buildMesh.getChildMeshes().forEach(mesh => {
             //     mesh.material = mesh.material.clone("");
@@ -109,11 +109,10 @@ export default () => {
                 let transformNode  = new TransformNode(`${key}`, scene);
                 transformNode.position.set(x, tile.height, y);
                 transformNode.metadata = {key};
-                let terrainMesh = terrains[tile.terrainType].parentMesh.clone(`tile`, transformNode);
-                terrainMesh.position.set(0,0,0);
-                terrainMesh.isPickable = true;
+                let terrainMesh = terrains[tile.terrainType].assetContainer.instantiateModelsToScene().rootNodes[0];
+                terrainMesh.setParent(transformNode);
                 let buildingNode : TransformNode = null;
-                let buildingMesh : Mesh = null;
+                let buildingMesh : TransformNode = null;
                 tile.listen("building", (currentValue, previousValue) => {
                     if (previousValue) {
                         const animation = Animation.CreateAndStartAnimation("build",  buildingNode, "position.y", 60, 10, 1, 0);
@@ -123,7 +122,8 @@ export default () => {
                     if (currentValue) {
                         buildingNode = new TransformNode("building", scene);
                         buildingNode.parent = transformNode;
-                        buildingMesh = buildings[currentValue.type].parentMesh.clone(`building`, buildingNode);
+                        buildingMesh = buildings[currentValue.type].assetContainer.instantiateModelsToScene().rootNodes[0];
+                        buildingMesh.setParent(buildingNode);
                         buildingMesh.position.set(0,0,0);
                         const animation = Animation.CreateAndStartAnimation("build", buildingNode, "position.y", 60, 10, 0, 1);
                         animation.loopAnimation = false;
@@ -138,10 +138,9 @@ export default () => {
                         terrainMesh.dispose();
                     }
                     if (currentValue !== null) {
-                        terrainMesh = terrains[tile.terrainType].parentMesh.clone(`tile`, transformNode);
+                        terrainMesh = terrains[tile.terrainType].assetContainer.instantiateModelsToScene().rootNodes[0];
+                        terrainMesh.setParent(transformNode);
                         terrainMesh.position.set(0,0,0);
-                        terrainMesh.setEnabled(true);
-                        terrainMesh.isPickable = true;
                         updateTileBorder(tile, transformNode);
                     }
                 })
@@ -209,6 +208,15 @@ export default () => {
     
       // This targets the camera to scene origin
       camera.setTarget(Vector3.Zero());
+
+      camera.lowerRadiusLimit = 4;
+      camera.upperRadiusLimit = 100;
+      camera.useBouncingBehavior = true;
+      camera.useAutoRotationBehavior = true;
+      camera.autoRotationBehavior.idleRotationWaitTime = 30000;
+      camera._useCtrlForPanning = false;
+      camera.panningAxis = Vector3.Zero();
+
     
       const canvas = scene.getEngine().getRenderingCanvas();
     

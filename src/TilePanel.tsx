@@ -39,8 +39,8 @@ export default function TilePanel(props: TilePanelProps) {
         <>
             <div id="terrain-type">
                 {terrainTypes.map((type, index) => <button key={index} onClick={() => props.setTerrainType(index)} className={props.tile.terrainType == index ? "terrain selected" : "terrain" } style={{backgroundColor: type.color}}></button>)}
+                <h3>{terrainTypes[props.tile.terrainType].name}</h3>
             </div>
-            <div className="hr"/>
             <div id = "height">
                 <div><label htmlFor="height">Height</label></div>
                 <input type="range" step="0.05" min="0" max="2" value={height} onChange={ev => updateHeight(parseFloat(ev.target.value))} id="height"/>
@@ -56,7 +56,7 @@ export default function TilePanel(props: TilePanelProps) {
                     <h3>{buildingTypes[props.tile.building.type].name}</h3>
                     <div><label htmlFor="rotation">Rotation</label></div>
                     <input type="range" min="0" max={2*Math.PI} step={0.1} value={rotation} onChange={ev => updateRotation(parseFloat(ev.target.value))} id="rotation"/>
-                    <button onClick={props.demolishBuilding}>Demolish Building</button>
+                    <button onClick={props.demolishBuilding}>Demolish</button>
                 </div>
             }
         </>

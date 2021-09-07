@@ -171,6 +171,11 @@ a:link, a:visited, a:hover, a:active {
   right: 15px;
 }
 
+#help-box .big {
+  font-weight: 900;
+  font-size: 18px;
+}
+
 #help-button {
   position: absolute;
   bottom: 4px;
@@ -184,6 +189,7 @@ a:link, a:visited, a:hover, a:active {
   cursor: pointer;
   background: none;
 }
+
 
 #build-panel {
   position: absolute;
