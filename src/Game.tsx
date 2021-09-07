@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
 import {  Vector3, HemisphericLight, Scene, Mesh, TransformNode, Animation, SceneLoader, PointerEventTypes, Node, AssetsManager, ArcRotateCamera, StateCondition, PBRMaterial, Color3 } from "@babylonjs/core";
 import SceneComponent from "./SceneComponent"; // uses above component in same directory
-import { MyRoomState, Tile } from './schema/MyRoomState';
+import { MyRoomState, Player, Tile } from './schema/MyRoomState';
 import "./App.css";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/inspector";
@@ -33,14 +33,33 @@ class GameObject {
     }
 }
 
+function updateTileBorder(tile: Tile, transformNode: TransformNode) {
+    const col3 = new Color3(0,0,0);
+    // average the colors of the players who are focusing
+    tile.focusing.forEach(player => {
+        col3.r += player.color.r / tile.focusing.length;
+        col3.g += player.color.g / tile.focusing.length;
+        col3.b += player.color.b / tile.focusing.length;
+    })
+    transformNode.getChildMeshes().forEach(mesh => {
+        if (tile.focusing.length == 0) {
+            mesh.renderOutline = false;
+        } else {
+            mesh.renderOutline = true;
+            mesh.outlineColor = col3;
+            mesh.outlineWidth = 0.05;
+        }
+    })
+}
+
 export default () => {
     const [focusedKey, setFocusedKey] = useState(-1);
     const [roomState, setRoomState] = useState(new MyRoomState());
     const [state, updateState] = React.useState({});
     const forceUpdate = React.useCallback(() => updateState({}), []);
     const [room, setRoom] = useState<Nullable<Colyseus.Room>>(null);
-    let terrains : GameObject[] = [];
-    let buildings : GameObject[] = [];
+    const terrains : GameObject[] = [];
+    const buildings : GameObject[] = [];
     // let buildType = 0;
     // let buildMesh : Mesh = null;
 
@@ -71,7 +90,8 @@ export default () => {
     }
 
     function connect(scene: Scene) {
-        var client = new Colyseus.Client('wss://mamawn.us-west-1.colyseus.dev'); // replace with ws://localhost:port if running server locally
+        var client = new Colyseus.Client('wss://mamawn.us-west-1.colyseus.dev'); // for colyseus arena
+        // const client = new Colyseus.Client('ws://localhost:2567'); // for local dev
         client.joinOrCreate("my_room").then(room => {
             setRoom(room);
             console.log(room.sessionId, "joined", room.name);
@@ -92,8 +112,6 @@ export default () => {
                 let terrainMesh = terrains[tile.terrainType].parentMesh.clone(`tile`, transformNode);
                 terrainMesh.position.set(0,0,0);
                 terrainMesh.isPickable = true;
-                // terrainMesh.enablePointerMoveEvents = true;
-                // terrainMesh.getChildMeshes().forEach((mesh)=>mesh.enablePointerMoveEvents=true);
                 let buildingNode : TransformNode = null;
                 let buildingMesh : Mesh = null;
                 tile.listen("building", (currentValue, previousValue) => {
@@ -112,22 +130,28 @@ export default () => {
                         tile.building.listen("rotation", (currentValue, previousValue) => {
                             buildingNode.rotation.y = tile.building.rotation;
                         })
+                        updateTileBorder(tile, transformNode);
                     }
                 })
                 tile.listen("terrainType", (currentValue, previousValue) => {
-                    if (previousValue) {
+                    if (previousValue !== null) {
                         terrainMesh.dispose();
                     }
-                    if (currentValue) {
+                    if (currentValue !== null) {
                         terrainMesh = terrains[tile.terrainType].parentMesh.clone(`tile`, transformNode);
                         terrainMesh.position.set(0,0,0);
                         terrainMesh.setEnabled(true);
                         terrainMesh.isPickable = true;
+                        updateTileBorder(tile, transformNode);
                     }
                 })
                 tile.listen("height", (currentValue, previousValue) => {
                     transformNode.position.y = tile.height;
                 })
+                tile.listen("focusing", () => {
+                    console.log("updating", key);
+                    updateTileBorder(tile, transformNode);
+                });
             }
             scene.onPointerObservable.add((pointerInfo) => {
                 let key = -1;
@@ -141,7 +165,8 @@ export default () => {
                     key = keyNode.metadata.key;
                 }
                 if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-                    setFocusedKey(key)
+                    setFocusedKey(key);
+                    room.send("focus", {key});
                 } /* else if (buildType != -1) {
                     if (key == -1) {
                         if (buildMesh != null) {
