@@ -98,6 +98,7 @@ button, input {
   overflow-y: auto;
   overflow-x: hidden;
   pointer-events: auto;
+  max-height: 85%;
 }
 
 .message {
@@ -107,6 +108,8 @@ button, input {
 
 #chatbox {
   width: 100%;
+  bottom: 0;
+  position: absolute;
 }
 
 #chatbox input {
@@ -158,6 +161,8 @@ button.terrain.selected {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
+  max-height: 75%;
+  overflow: scroll;
 }
 
 a:link, a:visited, a:hover, a:active {
