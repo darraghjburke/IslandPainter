@@ -40,6 +40,7 @@ function getKeyFromAxial(coord: AxialCoord, width: number) : number {
 }
 
 function setTileTerrainType(tile: Tile, type: number) {
+  tile.previousTerrainType = tile.terrainType;
   tile.terrainType = type;
     if (tile.building && !buildingTypes[tile.building.type].terrainTypes.includes(tile.terrainType)) {
       tile.building = null;
@@ -122,6 +123,17 @@ export class MyRoom extends Room<MyRoomState> {
     })
     this.onMessage("changeTerrainType", (client, message) => {
       setTileTerrainType(this.state.tiles[message.key], message.type);
+    })
+    this.onMessage("undoTerrainType", (client, message) => {
+      const tile = this.state.tiles[message.key];
+      if (tile.previousTerrainType >= 0) {
+        const current = tile.terrainType;
+        tile.terrainType = tile.previousTerrainType;
+        tile.previousTerrainType = current;
+        if (tile.building && !buildingTypes[tile.building.type].terrainTypes.includes(tile.terrainType)) {
+          tile.building = null;
+        }
+      }
     })
     this.onMessage("setHeight", (client, message) => {
       this.state.tiles[message.key].height = message.height;

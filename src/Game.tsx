@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
 import {  Vector3, HemisphericLight, Scene, Mesh, TransformNode, Animation, SceneLoader, PointerEventTypes, Node, AssetsManager, ArcRotateCamera, StateCondition, PBRMaterial, Color3 } from "@babylonjs/core";
 import SceneComponent from "./SceneComponent"; // uses above component in same directory
@@ -13,6 +13,12 @@ import { buildingTypes, terrainTypes } from "./schema/WorldObjects";
 import Help from "./Help";
 import BuildPanel from "./BuildPanel";
 import { AssetContainer } from "@babylonjs/core/assetContainer";
+
+interface TerrainEdit {
+    key: number;
+    oldType: number;
+    newType: number;
+}
 
 class GameObject {
     assetContainer : AssetContainer;
@@ -58,6 +64,8 @@ export default () => {
     const [state, updateState] = React.useState({});
     const forceUpdate = React.useCallback(() => updateState({}), []);
     const [room, setRoom] = useState<Nullable<Colyseus.Room>>(null);
+    const undoStack = useRef<TerrainEdit[]>([]);
+    const redoStack = useRef<TerrainEdit[]>([]);
     const terrains : GameObject[] = [];
     const buildings : GameObject[] = [];
     // let buildType = 0;
@@ -236,15 +244,56 @@ export default () => {
  */
 const onRender = (scene : Scene) => {};
 
+  const handleUndo = useCallback(() => {
+      if (undoStack.current.length === 0 || !room) return;
+      const edit = undoStack.current.pop();
+      redoStack.current.push(edit);
+      room.send("changeTerrainType", {key: edit.key, type: edit.oldType});
+      forceUpdate();
+  }, [room, forceUpdate]);
+
+  const handleRedo = useCallback(() => {
+      if (redoStack.current.length === 0 || !room) return;
+      const edit = redoStack.current.pop();
+      undoStack.current.push(edit);
+      room.send("changeTerrainType", {key: edit.key, type: edit.newType});
+      forceUpdate();
+  }, [room, forceUpdate]);
+
+  useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+          if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+              e.preventDefault();
+              handleUndo();
+          } else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
+              e.preventDefault();
+              handleRedo();
+          }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo, handleRedo]);
+
   return <div>
     <SceneComponent antialias onSceneReady={onSceneReady} onRender={onRender} id="my-canvas" />
     <TilePanel
         tile={roomState.tiles[focusedKey]}
         demolishBuilding={() => room.send("demolish", {key: focusedKey})}
         buildBuilding={type => room.send("build", {key: focusedKey, type})}
-        setTerrainType={type => room.send("changeTerrainType", {key: focusedKey, type})}
+        setTerrainType={type => {
+            const tile = roomState.tiles[focusedKey];
+            if (tile) {
+                undoStack.current.push({ key: focusedKey, oldType: tile.terrainType, newType: type });
+                redoStack.current = [];
+            }
+            room.send("changeTerrainType", {key: focusedKey, type});
+        }}
         setHeight={height => room.send("setHeight", {key: focusedKey, height})}
         setRotation={rotation => room.send("setRotation", {key: focusedKey, rotation})}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={undoStack.current.length > 0}
+        canRedo={redoStack.current.length > 0}
     />
     <Chat
         players={roomState.players}

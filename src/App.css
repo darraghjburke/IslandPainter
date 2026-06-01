@@ -196,6 +196,24 @@ a:link, a:visited, a:hover, a:active {
 }
 
 
+#undo-redo {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+
+#undo-redo button {
+  font-size: 13px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+#undo-redo button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 #build-panel {
   position: absolute;
   bottom: 0;

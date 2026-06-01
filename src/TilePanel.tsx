@@ -10,6 +10,10 @@ interface TilePanelProps {
     setTerrainType: (type: number) => void;
     setHeight: (height: number) => void;
     setRotation: (rotation: number) => void;
+    onUndo: () => void;
+    onRedo: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
 }
 
 export default function TilePanel(props: TilePanelProps) {
@@ -40,6 +44,10 @@ export default function TilePanel(props: TilePanelProps) {
             <div id="terrain-type">
                 {terrainTypes.map((type, index) => <button key={index} onClick={() => props.setTerrainType(index)} className={props.tile.terrainType == index ? "terrain selected" : "terrain" } style={{backgroundColor: type.color}}></button>)}
                 <h3>{terrainTypes[props.tile.terrainType].name}</h3>
+            </div>
+            <div id="undo-redo">
+                <button onClick={props.onUndo} disabled={!props.canUndo} title="Undo (Ctrl+Z)">Undo</button>
+                <button onClick={props.onRedo} disabled={!props.canRedo} title="Redo (Ctrl+Y)">Redo</button>
             </div>
             <div id = "height">
                 <div><label htmlFor="height">Height</label></div>
