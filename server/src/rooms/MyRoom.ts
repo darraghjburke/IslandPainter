@@ -1,6 +1,6 @@
 import { Room, Client } from "colyseus";
 import { Building, Color3, Message, MyRoomState, Player, Tile } from "./schema/MyRoomState";
-import { buildingTypes } from './schema/WorldObjects';
+import { buildingTypes, terrainTypes } from './schema/WorldObjects';
 import { getCharacter, getLocation } from "../names";
 
 interface AxialCoord {
@@ -73,6 +73,14 @@ function carveRiver(state: MyRoomState, startPoint: AxialCoord) {
 }
 
 export class MyRoom extends Room<MyRoomState> {
+
+  private isValidTileKey(key: unknown): key is number {
+    return typeof key === "number"
+        && Number.isInteger(key)
+        && key >= 0
+        && key < this.state.tiles.length;
+  }
+
   onCreate (options: any) {
     this.setState(new MyRoomState());
     this.state.name = getLocation();
@@ -109,40 +117,57 @@ export class MyRoom extends Room<MyRoomState> {
     }
 
     this.onMessage("click", (client, message) => {
-      console.log(message);
+      if (!this.isValidTileKey(message.key)) return;
       this.state.tiles[message.key].building = this.state.tiles[message.key].building ? null : new Building();
     })
     this.onMessage("demolish", (client, message) => {
+      if (!this.isValidTileKey(message.key)) return;
       this.state.tiles[message.key].building = null;
     })
     this.onMessage("build", (client, message) => {
+      if (!this.isValidTileKey(message.key)) return;
+      if (typeof message.type !== "number" || !Number.isInteger(message.type)
+          || message.type < 0 || message.type >= buildingTypes.length) return;
       const build = new Building();
       build.type = message.type;
       this.state.tiles[message.key].building = build;
     })
     this.onMessage("changeTerrainType", (client, message) => {
+      if (!this.isValidTileKey(message.key)) return;
+      if (typeof message.type !== "number" || !Number.isInteger(message.type)
+          || message.type < 0 || message.type >= terrainTypes.length) return;
       setTileTerrainType(this.state.tiles[message.key], message.type);
     })
     this.onMessage("setHeight", (client, message) => {
-      this.state.tiles[message.key].height = message.height;
+      if (!this.isValidTileKey(message.key)) return;
+      if (typeof message.height !== "number" || !Number.isFinite(message.height)) return;
+      const clampedHeight = Math.max(0, Math.min(2, message.height));
+      this.state.tiles[message.key].height = clampedHeight;
     })
     this.onMessage("setRotation", (client, message) => {
+      if (!this.isValidTileKey(message.key)) return;
+      if (typeof message.rotation !== "number" || !Number.isFinite(message.rotation)) return;
       if (this.state.tiles[message.key].building) {
         this.state.tiles[message.key].building.rotation = message.rotation;
       }
     })
     this.onMessage("message", (client, message) => {
+      if (typeof message.message !== "string") return;
+      const MAX_MESSAGE_LENGTH = 500;
+      const sanitizedMessage = message.message.slice(0, MAX_MESSAGE_LENGTH);
+      if (sanitizedMessage.length === 0) return;
       const player = this.state.players.find(pl => pl.id == client.sessionId);
       if (player) {
         const msg = new Message();
         msg.name = `${player.name}: `;
         msg.color = player.color;
-        msg.message = message.message;
+        msg.message = sanitizedMessage;
         this.state.messages.push(msg);
         console.log(client.sessionId, player.name, "said", msg.message);
       }
     })
     this.onMessage("focus", (client, message) => {
+      if (!this.isValidTileKey(message.key) && message.key !== -1) return;
       const player = this.state.players.find(pl => pl.id == client.sessionId);
       if (player) {
         this.state.tiles.forEach((tile, index) => {

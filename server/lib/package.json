@@ -36,6 +36,7 @@
     "colyseus": "^0.14.20",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "express-basic-auth": "^1.2.1",
     "simplex-noise": "^3.0.0"
   }
 }
