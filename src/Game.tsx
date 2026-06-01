@@ -5,7 +5,6 @@ import SceneComponent from "./SceneComponent"; // uses above component in same d
 import { MyRoomState, Player, Tile } from './schema/MyRoomState';
 import "./App.css";
 import "@babylonjs/loaders/glTF";
-import "@babylonjs/inspector";
 import TilePanel from './TilePanel';
 import { Nullable } from "@babylonjs/core/types";
 import Chat from "./Chat";
@@ -90,8 +89,9 @@ export default () => {
     }
 
     function connect(scene: Scene) {
-        var client = new Colyseus.Client('wss://mamawn.us-west-1.colyseus.dev'); // for colyseus arena
-        // const client = new Colyseus.Client('ws://localhost:2567'); // for local dev
+        var client = new Colyseus.Client(
+            process.env.REACT_APP_COLYSEUS_URL || 'ws://localhost:2567'
+        );
         client.joinOrCreate("my_room").then(room => {
             setRoom(room);
             console.log(room.sessionId, "joined", room.name);
